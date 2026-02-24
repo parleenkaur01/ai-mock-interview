@@ -2,7 +2,7 @@ import {LoaderPage} from "@/routes/loader-page";
 import { useAuth } from "@clerk/clerk-react";
 import { Navigate } from "react-router-dom";
 
-const ProtectRoutes =({children}:{children:React.ReactNode})=>{
+const ProtectRoutes =({children}:{children:React.ReactNode})=>{ //in this case children = Mainlayout
 
     const {isLoaded,isSignedIn}= useAuth();
 
