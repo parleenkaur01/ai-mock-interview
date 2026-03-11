@@ -2,6 +2,7 @@ import {useAuth} from "@clerk/clerk-react";
 import { Loader } from "lucide-react";
 import { UserButton } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router";
 export const ProfileContainer=()=>{
 
     const {isSignedIn,isLoaded} = useAuth();
@@ -18,7 +19,9 @@ export const ProfileContainer=()=>{
             {isSignedIn ? (
                 <UserButton afterSignOutUrl="/" />
             ): (
-            <Button>Get Started</Button> 
+            <Link to={"/signin"}>
+                <Button size={"sm"}>Get Started</Button>
+            </Link> 
             )}
         </div>
     );
