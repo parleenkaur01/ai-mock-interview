@@ -11,7 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { TooltipButton } from "./tooltip-button";
-import { Eye, Newspaper, Sparkles} from "lucide-react";
+import { Eye, Newspaper, Sparkles,Pencil} from "lucide-react";
 
 
 interface InterviewPinProps{
@@ -70,7 +70,7 @@ export const InterviewPin = ({interview, onMockPage = false}: InterviewPinProps)
                          content="Feedback"
                          buttonVariant={"ghost"}
                          onClick={() => {
-                               navigate(`/generate/${interview?.id}`, { replace: true });
+                          navigate(`/generate/feedback/${interview?.id}`, { replace: true });
                         }}
                         disbaled={false}
                         buttonClassName="hover:text-yellow-500"
@@ -81,8 +81,11 @@ export const InterviewPin = ({interview, onMockPage = false}: InterviewPinProps)
                          content="Start"
                          buttonVariant={"ghost"}
                          onClick={() => {
-                               navigate(`/generate/${interview?.id}`, { replace: true });
+                          navigate(`/generate/interview/${interview?.id}`, {
+                            replace: true,
+                          });
                         }}
+                              
                         disbaled={false}
                         buttonClassName="hover:text-yellow-500"
                         icon={<Sparkles />}
