@@ -90,20 +90,22 @@ export const FormMockInterview = ({initialData}:FormMockInterviewProps) => {
 
     const generateAiResponse = async(data:FormData)=>{
         const prompt = `
-        As an experienced prompt engineer, generate a JSON array containing 5 technical interview questions along with detailed answers based on the following job information. Each object in the array should have the fields "question" and "answer", formatted as follows:
+        You are an experienced hiring manager. Generate a JSON array of exactly 5 mock interview questions with detailed, realistic model answers.
 
-        [
-          { "question": "<Question text>", "answer": "<Answer text>" },
-          ...
-        ]
+        Use a balanced mix (do not make every question pure technical trivia or coding-only):
+        - Include at least 1 question about relevant experience with the role and technologies (e.g. depth of experience with ${data?.techStack}, responsibilities from the job, or "what experience do you have with …").
+        - Include at least 1 behavioral or situational question (e.g. teamwork, deadlines, learning, conflict, or "tell me about a time …").
+        - The remaining questions may be technical: concepts, tradeoffs, debugging, or light design/problem-solving appropriate to roughly ${data?.experience} years of experience, grounded in ${data?.techStack}.
 
-        Job Information:
-        - Job Position: ${data?.position}
-        - Job Description: ${data?.description}
-        - Years of Experience Required: ${data?.experience}
-        - Tech Stacks: ${data?.techStack}
+        Each object must have exactly these string fields: "question" and "answer".
 
-        The questions should assess skills in ${data?.techStack} development and best practices, problem-solving, and experience handling complex requirements. Please format the output strictly as an array of JSON objects without any additional labels, code blocks, or explanations. Return only the JSON array with questions and answers.
+        Job information:
+        - Job position: ${data?.position}
+        - Job description: ${data?.description}
+        - Target experience level (years): ${data?.experience}
+        - Tech stack: ${data?.techStack}
+
+        Return ONLY a valid JSON array. No markdown, no code fences, no labels, no text before or after the array.
         `;
 
         const aiResult = await chatSession.sendMessage(prompt);
