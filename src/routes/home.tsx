@@ -51,18 +51,21 @@ const HomePage =()=>{
                 />
 
                 <div className="absolute top-4 left-4 px-4 py-2 rounded-md bg-white/40 backdrop-blur-md">
-                    Inteviews Copilot&copy;
+                    Interviews Copilot&copy;
                 </div>
 
-                <div className="hidden md:block absolute w-80 bottom-4 right-4 px-4 py-2 rounded-md bg-white/60 backdrop-blur-md">
+                <div className="absolute bottom-4 left-4 right-4 max-w-md mx-auto md:mx-0 md:left-auto md:right-4 md:w-80 md:max-w-none px-4 py-2 rounded-md bg-white/60 backdrop-blur-md">
                     <h2 className="text-neutral-800 font-semibold">Developer</h2>
                     <p className="text-sm text-neutral-500">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Numquam
-                        distinctio natus, quos voluptatibus magni sapiente.
+                        Practice realistic technical interviews tailored to your role and
+                        stack. Generate questions, record answers, and get AI feedback so
+                        you walk in prepared and confident.
                     </p>
 
-                    <Button className="mt-3">
-                        Generate <Sparkles />
+                    <Button asChild className="mt-3">
+                        <Link to="/generate">
+                            Generate <Sparkles />
+                        </Link>
                     </Button>
                 </div>
             </div>

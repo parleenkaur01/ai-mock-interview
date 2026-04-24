@@ -1,4 +1,4 @@
-import {set, z} from "zod"
+import { z } from "zod"
 import {zodResolver} from "@hookform/resolvers/zod"
 import { FormProvider, useForm } from "react-hook-form"
 
@@ -7,7 +7,6 @@ import { CustomBreadCrumb } from "./custom-bread-crumb"
 import {useEffect ,useState} from "react"
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
-import { describe } from "zod/v4/core"
 import { toast } from "sonner";
 import { Headings } from "./headings";
 import { Button } from "./button";
@@ -20,6 +19,7 @@ import { chatSession } from "@/scripts";
 import {
     addDoc,
     collection,
+    deleteDoc,
     doc,
     serverTimestamp,
     updateDoc,
@@ -43,10 +43,11 @@ const formSchema = z.object({
 
 });
 
-type FormData = z.infer<typeof formSchema>
+type FormValues = z.input<typeof formSchema>
+type FormData = z.output<typeof formSchema>
 export const FormMockInterview = ({initialData}:FormMockInterviewProps) => {
 
-    const form = useForm<FormData>({
+    const form = useForm<FormValues, unknown, FormData>({
         resolver: zodResolver(formSchema),
         defaultValues: initialData || {}
     })
@@ -54,6 +55,7 @@ export const FormMockInterview = ({initialData}:FormMockInterviewProps) => {
 
     const {isValid, isSubmitting} = form.formState;
     const [loading,setLoading] = useState(false);
+    const [deleting, setDeleting] = useState(false);
     const navigate = useNavigate();
     const {userId} = useAuth();
 
@@ -109,6 +111,29 @@ export const FormMockInterview = ({initialData}:FormMockInterviewProps) => {
 
         return cleanedResponse;
     }
+
+    const handleDelete = async () => {
+        if (!initialData?.id) return;
+        const ok = window.confirm(
+            "Delete this mock interview? This cannot be undone."
+        );
+        if (!ok) return;
+        try {
+            setDeleting(true);
+            await deleteDoc(doc(db, "interviews", initialData.id));
+            toast.success("Deleted", {
+                description: "The interview was removed.",
+            });
+            navigate("/generate", { replace: true });
+        } catch (error) {
+            console.log(error);
+            toast.error("Could not delete", {
+                description: "Something went wrong. Please try again.",
+            });
+        } finally {
+            setDeleting(false);
+        }
+    };
 
     const onSubmit = async(data:FormData)=>{
         try{
@@ -176,10 +201,20 @@ export const FormMockInterview = ({initialData}:FormMockInterviewProps) => {
             <div className="mt-4 flex items-center justify-between w-full">
                 <Headings title ={title} isSubHeading />
                 {initialData && (
-                   <Button size={"icon"} variant={"ghost"}>
-                      <Trash2 className="min-w-4 min-h-4 text-red-500" />
+                    <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        disabled={loading || deleting}
+                        onClick={handleDelete}
+                        aria-label="Delete interview"
+                    >
+                        {deleting ? (
+                            <Loader className="size-4 animate-spin text-red-500" />
+                        ) : (
+                            <Trash2 className="min-w-4 min-h-4 text-red-500" />
+                        )}
                     </Button>
-                    
                 )}
             </div>
 
@@ -256,11 +291,24 @@ export const FormMockInterview = ({initialData}:FormMockInterviewProps) => {
                                 <FormControl>
                                     <Input
                                     type="number"
-                                    {...field}
+                                    name={field.name}
+                                    ref={field.ref}
+                                    onBlur={field.onBlur}
+                                    onChange={(e) =>
+                                      field.onChange(
+                                        e.target.value === "" ? undefined : Number(e.target.value)
+                                      )
+                                    }
+                                    value={
+                                      typeof field.value === "number"
+                                        ? field.value
+                                        : field.value
+                                          ? Number(field.value)
+                                          : ""
+                                    }
                                     disabled ={loading}
                                     className="h-12"
                                         placeholder="eg:- 5 years in number"
-                                        value={field.value || ""}
                                         
                                     />
 
@@ -277,7 +325,7 @@ export const FormMockInterview = ({initialData}:FormMockInterviewProps) => {
                         render ={({field}) =>(
                             <FormItem className="w-full space-y-4">
                                 <div className= "w-full flex items-center justify-between">
-                                    <FormLabel> Years of Experience</FormLabel>
+                                    <FormLabel> TechStack</FormLabel>
                                     <FormMessage className="text-sm" />
                                 </div>
                                 <FormControl>

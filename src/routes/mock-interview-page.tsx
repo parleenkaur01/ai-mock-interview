@@ -16,7 +16,7 @@ export const MockInterviewPage = () => {
     const { interviewId } = useParams<{ interviewId: string }>();
     const [interview, setInterview] = useState<Interview | null>(null);
   
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading] = useState(false);
   
     const navigate = useNavigate();
     useEffect(() => {
